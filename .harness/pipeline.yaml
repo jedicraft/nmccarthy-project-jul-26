@@ -1,8 +1,10 @@
+# Reference v1 pipeline YAML (Harness UI uses v0 pipeline nmccarthy_project_jul_26_ci_cd).
+# See Harness pipeline studio for the active definition.
 pipeline:
   name: nmccarthy-project-jul-26-ci-cd
   identifier: nmccarthy_project_jul_26_ci_cd
   repo:
-    connector: jedicraftGitHub
+    connector: account.jedicraftGitHub
     name: jedicraft/nmccarthy-project-jul-26
   clone:
     depth: 1
