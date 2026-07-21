@@ -1,5 +1,6 @@
 pipeline:
   name: nmccarthy-project-jul-26-ci-cd
+  identifier: nmccarthy_project_jul_26_ci_cd
   repo:
     connector: jedicraftGitHub
     name: jedicraft/nmccarthy-project-jul-26
@@ -8,37 +9,35 @@ pipeline:
   on:
   - push:
       branches: [main]
-  - pull_request:
-      branches: [main]
   stages:
   - name: test-and-build
     runtime: cloud
     platform:
       os: linux
-      arch: arm
-    cache:
-      path: node_modules
-      key: npm.${{ branch }}
+      arch: arm64
     steps:
     - run:
-        container: node:22
+        container:
+          image: node:22
         script: npm ci
     - run-test:
-        container: node:22
+        container:
+          image: node:22
         script: npm test
     - run:
-        container: node:22
+        container:
+          image: node:22
         script: npm run build
   - name: deploy-gcs
     if: ${{ branch == "main" }}
     runtime: cloud
     platform:
       os: linux
-      arch: arm
+      arch: arm64
     steps:
     - template:
         uses: uploadArtifactsToGCS
         with:
-          connector: NMcCarthy-Sandbox-GCP
+          connector: NMcCarthySandboxGCP
           bucket: nmccarthy-project-jul-26-static
           source: dist/**
