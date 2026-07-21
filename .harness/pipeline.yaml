@@ -1,0 +1,44 @@
+pipeline:
+  name: nmccarthy-project-jul-26-ci-cd
+  repo:
+    connector: jedicraftGitHub
+    name: jedicraft/nmccarthy-project-jul-26
+  clone:
+    depth: 1
+  on:
+  - push:
+      branches: [main]
+  - pull_request:
+      branches: [main]
+  stages:
+  - name: test-and-build
+    runtime: cloud
+    platform:
+      os: linux
+      arch: arm
+    cache:
+      path: node_modules
+      key: npm.${{ branch }}
+    steps:
+    - run:
+        container: node:22
+        script: npm ci
+    - run-test:
+        container: node:22
+        script: npm test
+    - run:
+        container: node:22
+        script: npm run build
+  - name: deploy-gcs
+    if: ${{ branch == "main" }}
+    runtime: cloud
+    platform:
+      os: linux
+      arch: arm
+    steps:
+    - template:
+        uses: uploadArtifactsToGCS
+        with:
+          connector: NMcCarthy-Sandbox-GCP
+          bucket: nmccarthy-project-jul-26-static
+          source: dist/**
