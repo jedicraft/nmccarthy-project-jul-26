@@ -119,3 +119,40 @@ pipeline:
                 - AllErrors
               action:
                 type: MarkAsFailure
+    - stage:
+        name: wait and undeploy k8s
+        identifier: undeploy_k8s
+        type: Custom
+        spec:
+          execution:
+            steps:
+              - step:
+                  name: Wait 1 hour before undeploy
+                  identifier: wait_before_undeploy
+                  type: Wait
+                  timeout: 65m
+                  spec:
+                    duration: 1h
+              - step:
+                  name: Undeploy from Kubernetes
+                  identifier: k8s_delete
+                  type: ShellScript
+                  timeout: 10m
+                  spec:
+                    shell: Bash
+                    onDelegate: true
+                    delegateSelectors:
+                      - nmccarth-rancher-desktop-delegate
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          set -e
+                          kubectl delete namespace nmccarthy-project-jul-26 --wait=true --ignore-not-found
+                          echo "Undeployed nmccarthy-project-jul-26 from Rancher Desktop Kubernetes"
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: MarkAsFailure
