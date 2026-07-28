@@ -1,0 +1,9 @@
+node_modules
+dist
+.git
+.gitignore
+infra
+.harness
+*.md
+.env
+.env.*

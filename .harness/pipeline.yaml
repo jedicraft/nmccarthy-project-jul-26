@@ -1,45 +1,93 @@
-# Reference v1 pipeline YAML (Harness UI uses v0 pipeline nmccarthy_project_jul_26_ci_cd).
-# See Harness pipeline studio for the active definition.
 pipeline:
   name: nmccarthy-project-jul-26-ci-cd
   identifier: nmccarthy_project_jul_26_ci_cd
-  repo:
-    connector: account.jedicraftGitHub
-    name: jedicraft/nmccarthy-project-jul-26
-  clone:
-    depth: 1
-  on:
-  - push:
-      branches: [main]
+  orgIdentifier: sandbox
+  projectIdentifier: NMcCarthy_Sandbox
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: jedicraftGitHub
+        repoName: nmccarthy-project-jul-26
+        build:
+          type: branch
+          spec:
+            branch: main
   stages:
-  - name: test-and-build
-    runtime: cloud
-    platform:
-      os: linux
-      arch: arm64
-    steps:
-    - run:
-        container:
-          image: node:22
-        script: npm ci
-    - run-test:
-        container:
-          image: node:22
-        script: npm test
-    - run:
-        container:
-          image: node:22
-        script: npm run build
-  - name: deploy-gcs
-    if: ${{ branch == "main" }}
-    runtime: cloud
-    platform:
-      os: linux
-      arch: arm64
-    steps:
-    - template:
-        uses: uploadArtifactsToGCS
-        with:
-          connector: NMcCarthySandboxGCP
-          bucket: nmccarthy-project-jul-26-static
-          source: dist/**
+    - stage:
+        name: test
+        identifier: test
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  name: Install dependencies
+                  identifier: install
+                  type: Run
+                  spec:
+                    shell: Sh
+                    command: npm ci
+              - step:
+                  name: Run tests
+                  identifier: unit_test
+                  type: Run
+                  spec:
+                    shell: Sh
+                    command: npm test
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: MarkAsFailure
+    - stage:
+        name: deploy k8s
+        identifier: deploy_k8s
+        type: CI
+        spec:
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  name: Build and Push Image
+                  identifier: build_push
+                  type: BuildAndPushDockerRegistry
+                  spec:
+                    connectorRef: nmccarthydockerdesktoplaptop
+                    repo: mccarthyharness/nmccarthy-project-jul-26
+                    tags:
+                      - latest
+                      - <+pipeline.sequenceId>
+                    dockerfile: Dockerfile
+                    context: .
+              - step:
+                  name: Deploy to Kubernetes
+                  identifier: k8s_apply
+                  type: Run
+                  spec:
+                    registryRef: test_ar_HAR
+                    image: bitnami/kubectl:latest
+                    shell: Sh
+                    command: kubectl apply -f k8s/
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: NJMK8sLocalRancherDesktop
+              namespace: nmccarthy-project-jul-26
+              automountServiceAccountToken: true
+              nodeSelector: {}
+              os: Linux
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: MarkAsFailure
