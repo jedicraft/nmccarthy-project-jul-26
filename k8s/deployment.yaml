@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: solitaire
-          image: mccarthyharness/nmccarthy-project-jul-26:latest
+          image: jedicraft/nmccarthy-project-jul-26:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80

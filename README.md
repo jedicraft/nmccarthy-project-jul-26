@@ -9,7 +9,7 @@ All project resources share the prefix **`nmccarthy-project-jul-26`**:
 | Resource | Name |
 |----------|------|
 | K8s namespace | `nmccarthy-project-jul-26` |
-| Docker image | `mccarthyharness/nmccarthy-project-jul-26` |
+| Docker image | `jedicraft/nmccarthy-project-jul-26` |
 | Harness pipeline | `nmccarthy-project-jul-26-ci-cd` |
 | GitHub repo | `jedicraft/nmccarthy-project-jul-26` |
 
@@ -72,13 +72,14 @@ Pipeline definition: [`.harness/pipeline.yaml`](.harness/pipeline.yaml)
 | Connector | Purpose |
 |-----------|---------|
 | `jedicraftGitHub` | Clone `jedicraft/nmccarthy-project-jul-26` |
-| `nmccarthydockerdesktoplaptop` | Build and push Docker image |
+| `DockerHub` | Build and push Docker image (Harness Cloud) |
 | `NJMK8sLocalRancherDesktop` | Deploy to Rancher Desktop K8s |
 
 **Stages**
 
 1. **test** — Harness Cloud: `npm ci`, `npm test`
-2. **deploy k8s** — KubernetesDirect on Rancher Desktop: Docker build/push, `kubectl apply -f k8s/`
+2. **build image** — Harness Cloud: Docker build/push to Docker Hub
+3. **deploy k8s** — Rancher Desktop delegate: `kubectl apply` + rollout restart
 
 [Open pipeline in Harness](https://app.harness.io/ng/account/EeRjnXTnS4GrLG5VNNJZUw/all/orgs/sandbox/projects/NMcCarthy_Sandbox/pipelines/nmccarthy_project_jul_26_ci_cd/pipeline-studio)
 

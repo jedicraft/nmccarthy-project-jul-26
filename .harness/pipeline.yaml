@@ -51,6 +51,39 @@ pipeline:
               action:
                 type: MarkAsFailure
     - stage:
+        name: build image
+        identifier: build_image
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  name: Build and Push Image
+                  identifier: build_push
+                  type: BuildAndPushDockerRegistry
+                  timeout: 30m
+                  spec:
+                    connectorRef: DockerHub
+                    repo: jedicraft/nmccarthy-project-jul-26
+                    tags:
+                      - latest
+                      - <+pipeline.sequenceId>
+                    dockerfile: Dockerfile
+                    context: .
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: MarkAsFailure
+    - stage:
         name: deploy k8s
         identifier: deploy_k8s
         type: CI
@@ -59,26 +92,15 @@ pipeline:
           execution:
             steps:
               - step:
-                  name: Build and Push Image
-                  identifier: build_push
-                  type: BuildAndPushDockerRegistry
-                  spec:
-                    connectorRef: nmccarthydockerdesktoplaptop
-                    repo: mccarthyharness/nmccarthy-project-jul-26
-                    tags:
-                      - latest
-                      - <+pipeline.sequenceId>
-                    dockerfile: Dockerfile
-                    context: .
-              - step:
                   name: Deploy to Kubernetes
                   identifier: k8s_apply
                   type: Run
+                  timeout: 10m
                   spec:
                     registryRef: test_ar_HAR
                     image: bitnami/kubectl:latest
                     shell: Sh
-                    command: kubectl apply -f k8s/
+                    command: kubectl apply -f k8s/ && kubectl rollout restart deployment/nmccarthy-project-jul-26 -n nmccarthy-project-jul-26
           infrastructure:
             type: KubernetesDirect
             spec:
