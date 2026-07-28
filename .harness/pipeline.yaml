@@ -97,7 +97,6 @@ pipeline:
                   type: Run
                   timeout: 10m
                   spec:
-                    registryRef: test_ar_HAR
                     image: bitnami/kubectl:latest
                     shell: Sh
                     command: kubectl apply -f k8s/ && kubectl rollout restart deployment/nmccarthy-project-jul-26 -n nmccarthy-project-jul-26
