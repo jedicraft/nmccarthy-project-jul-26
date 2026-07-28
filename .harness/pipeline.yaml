@@ -91,18 +91,6 @@ pipeline:
           execution:
             steps:
               - step:
-                  name: Clone codebase
-                  identifier: clone
-                  type: GitClone
-                  spec:
-                    connectorRef: jedicraftGitHub
-                    repoName: nmccarthy-project-jul-26
-                    build:
-                      type: branch
-                      spec:
-                        branch: main
-                    cloneDirectory: /harness
-              - step:
                   name: Deploy to Kubernetes
                   identifier: k8s_apply
                   type: ShellScript
@@ -117,9 +105,12 @@ pipeline:
                       spec:
                         script: |
                           set -e
-                          kubectl apply -f /harness/k8s/namespace.yaml
+                          rm -rf /tmp/nmccarthy-project-jul-26
+                          git clone --depth 1 --branch main https://github.com/jedicraft/nmccarthy-project-jul-26.git /tmp/nmccarthy-project-jul-26
+                          cd /tmp/nmccarthy-project-jul-26
+                          kubectl apply -f k8s/namespace.yaml
                           kubectl wait --for=jsonpath='{.status.phase}'=Active namespace/nmccarthy-project-jul-26 --timeout=60s
-                          kubectl apply -f /harness/k8s/deployment.yaml -f /harness/k8s/service.yaml
+                          kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml
                           kubectl rollout restart deployment/nmccarthy-project-jul-26 -n nmccarthy-project-jul-26
                           kubectl rollout status deployment/nmccarthy-project-jul-26 -n nmccarthy-project-jul-26 --timeout=120s
         failureStrategies:
