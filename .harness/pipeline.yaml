@@ -33,6 +33,7 @@ pipeline:
                   identifier: install
                   type: Run
                   spec:
+                    image: node:22-alpine
                     shell: Sh
                     command: npm ci
               - step:
@@ -40,6 +41,7 @@ pipeline:
                   identifier: unit_test
                   type: Run
                   spec:
+                    image: node:22-alpine
                     shell: Sh
                     command: npm test
         failureStrategies:
@@ -81,7 +83,7 @@ pipeline:
             type: KubernetesDirect
             spec:
               connectorRef: NJMK8sLocalRancherDesktop
-              namespace: nmccarthy-project-jul-26
+              namespace: default
               automountServiceAccountToken: true
               nodeSelector: {}
               os: Linux
