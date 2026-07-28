@@ -97,10 +97,10 @@ pipeline:
                   type: Run
                   timeout: 10m
                   spec:
-                    registryRef: DockerHub
+                    registryRef: nmccarthydockerdesktoplaptop
                     image: bitnami/kubectl:latest
                     shell: Sh
-                    command: kubectl apply -f k8s/ && kubectl rollout restart deployment/nmccarthy-project-jul-26 -n nmccarthy-project-jul-26
+                    command: kubectl apply -f k8s/namespace.yaml && kubectl wait --for=jsonpath='{.status.phase}'=Active namespace/nmccarthy-project-jul-26 --timeout=60s && kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml && kubectl rollout restart deployment/nmccarthy-project-jul-26 -n nmccarthy-project-jul-26 && kubectl rollout status deployment/nmccarthy-project-jul-26 -n nmccarthy-project-jul-26 --timeout=120s
           infrastructure:
             type: KubernetesDirect
             spec:
