@@ -5,6 +5,7 @@ import {
   saveSettings,
   type Settings,
 } from '../storage/settings.ts'
+import { applyBackground } from '../themes/backgrounds.ts'
 import { applyTheme } from '../themes/themes.ts'
 import { setSoundEnabled } from '../audio/sounds.ts'
 
@@ -13,8 +14,9 @@ export function useSettings() {
 
   useEffect(() => {
     applyTheme(settings.theme)
+    applyBackground(settings.background)
     setSoundEnabled(settings.sound)
-  }, [settings.theme, settings.sound])
+  }, [settings.theme, settings.background, settings.sound])
 
   const updateSettings = useCallback((patch: Partial<Settings>) => {
     setSettingsState((current) => {

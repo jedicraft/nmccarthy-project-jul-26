@@ -1,8 +1,16 @@
+import {
+  isBackgroundId,
+  type BackgroundId,
+} from '../themes/backgrounds.ts'
+
 export type ThemeId = 'classic' | 'dark' | 'minimal'
+
+export type { BackgroundId }
 
 export interface Settings {
   drawCount: 1 | 3
   theme: ThemeId
+  background: BackgroundId
   sound: boolean
   unlimitedRecycle: boolean
   logoBack: boolean
@@ -13,6 +21,7 @@ const STORAGE_KEY = 'solitaire-settings'
 export const DEFAULT_SETTINGS: Settings = {
   drawCount: 1,
   theme: 'classic',
+  background: 'felt',
   sound: true,
   unlimitedRecycle: true,
   logoBack: true,
@@ -31,6 +40,10 @@ export function loadSettings(): Settings {
         parsed.theme === 'dark' || parsed.theme === 'minimal'
           ? parsed.theme
           : 'classic',
+      background:
+        parsed.background && isBackgroundId(parsed.background)
+          ? parsed.background
+          : 'felt',
       sound: parsed.sound !== false,
       unlimitedRecycle: parsed.unlimitedRecycle !== false,
       logoBack: parsed.logoBack !== false,

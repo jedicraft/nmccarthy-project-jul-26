@@ -24,7 +24,7 @@ export function Toolbar({
   return (
     <header className="toolbar">
       <div className="toolbar__left">
-        <h1 className="toolbar__title">Solitaire</h1>
+        <h1 className="toolbar__title">Harness Solitaire</h1>
       </div>
 
       <div className="toolbar__stats">

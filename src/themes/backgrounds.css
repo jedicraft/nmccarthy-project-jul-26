@@ -1,0 +1,92 @@
+[data-background='felt'] body {
+  background: var(--felt-gradient, var(--felt));
+}
+
+[data-background='tropical'] body,
+[data-background='waterfall'] body,
+[data-background='city'] body,
+[data-background='mountains'] body {
+  background-color: #0f1720;
+  background-image: linear-gradient(
+      rgba(0, 0, 0, 0.42),
+      rgba(0, 0, 0, 0.42)
+    ),
+    var(--scene-image);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+[data-background='tropical'] body {
+  --scene-image: url('/assets/backgrounds/tropical.jpg');
+}
+
+[data-background='waterfall'] body {
+  --scene-image: url('/assets/backgrounds/waterfall.jpg');
+}
+
+[data-background='city'] body {
+  --scene-image: url('/assets/backgrounds/city.jpg');
+}
+
+[data-background='mountains'] body {
+  --scene-image: url('/assets/backgrounds/mountains.jpg');
+}
+
+.background-picker {
+  margin-bottom: 12px;
+}
+
+.background-picker__label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.background-picker__options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 8px;
+}
+
+.background-picker__option {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 6px;
+  border: 2px solid var(--modal-border);
+  border-radius: 10px;
+  background: var(--surface-strong);
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.background-picker__option:hover {
+  border-color: rgba(37, 99, 235, 0.45);
+}
+
+.background-picker__option--selected {
+  border-color: var(--accent, #2563eb);
+  box-shadow: 0 0 0 1px var(--accent, #2563eb);
+}
+
+.background-picker__thumb,
+.background-picker__felt {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.background-picker__felt {
+  background: linear-gradient(160deg, #1f7a45 0%, #145a32 100%);
+}
+
+.background-picker__name {
+  font-size: 0.72rem;
+  line-height: 1.2;
+  text-align: center;
+}

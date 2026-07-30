@@ -1,4 +1,5 @@
 import { THEMES } from '../themes/themes.ts'
+import { BACKGROUNDS } from '../themes/backgrounds.ts'
 import type { Settings } from '../storage/settings.ts'
 import type { GameStats } from '../storage/stats.ts'
 
@@ -92,6 +93,43 @@ export function SettingsModal({
                 ))}
               </select>
             </label>
+            <div className="background-picker">
+              <span className="background-picker__label">Background</span>
+              <div
+                className="background-picker__options"
+                role="radiogroup"
+                aria-label="Game background"
+              >
+                {BACKGROUNDS.map((background) => (
+                  <button
+                    key={background.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={settings.background === background.id}
+                    className={`background-picker__option${
+                      settings.background === background.id
+                        ? ' background-picker__option--selected'
+                        : ''
+                    }`}
+                    onClick={() => onChange({ background: background.id })}
+                    title={background.label}
+                  >
+                    {background.image ? (
+                      <img
+                        src={background.image}
+                        alt=""
+                        className="background-picker__thumb"
+                      />
+                    ) : (
+                      <span className="background-picker__felt" aria-hidden />
+                    )}
+                    <span className="background-picker__name">
+                      {background.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
             <label className="field field--checkbox">
               <input
                 type="checkbox"
