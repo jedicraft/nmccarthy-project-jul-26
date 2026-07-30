@@ -94,6 +94,26 @@ pipeline:
                       - <+pipeline.sequenceId>
                     dockerfile: Dockerfile
                     context: .
+              - step:
+                  name: Generate SBOM
+                  identifier: sbom_generation
+                  type: SscaOrchestration
+                  timeout: 15m
+                  spec:
+                    mode: generation
+                    source:
+                      type: docker
+                      spec:
+                        connector: DockerHub
+                        repo: jedicraft/nmccarthy-project-jul-26:<+pipeline.sequenceId>
+                    tool:
+                      type: Syft
+                      spec:
+                        format: spdx-json
+                    resources:
+                      limits:
+                        memory: 500Mi
+                        cpu: "0.5"
         failureStrategies:
           - onFailure:
               errors:

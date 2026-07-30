@@ -9,7 +9,11 @@ import { useSettings } from './hooks/useSettings.ts'
 import { useStats } from './hooks/useStats.ts'
 import { computeFinalScore } from './game/variants/klondike/scoring.ts'
 import { InstallPrompt } from './pwa/InstallPrompt.tsx'
+import { demoInsecureMerge } from './demo/scannerFindings.ts'
 import './App.css'
+
+// Demo-only: referenced so dependency + SAST findings stay in scope for security scans.
+void demoInsecureMerge
 
 function useGameTimer(active: boolean) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
