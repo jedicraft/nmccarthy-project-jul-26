@@ -15,8 +15,8 @@ pipeline:
             branch: main
   stages:
     - stage:
-        name: test
-        identifier: test
+        name: build test scan and publish
+        identifier: ci
         type: CI
         spec:
           cloneCodebase: true
@@ -44,26 +44,6 @@ pipeline:
                     image: node:22-alpine
                     shell: Sh
                     command: npm test
-        failureStrategies:
-          - onFailure:
-              errors:
-                - AllErrors
-              action:
-                type: MarkAsFailure
-    - stage:
-        name: security scan
-        identifier: security_scan
-        type: CI
-        spec:
-          cloneCodebase: true
-          platform:
-            os: Linux
-            arch: Amd64
-          runtime:
-            type: Cloud
-            spec: {}
-          execution:
-            steps:
               - step:
                   name: Install dependencies
                   identifier: security_install
@@ -101,26 +81,6 @@ pipeline:
                           access_token: <+secrets.getValue("sonarqube_token")>
                           domain: https://sonarcloud.io
                           ssl: true
-        failureStrategies:
-          - onFailure:
-              errors:
-                - AllErrors
-              action:
-                type: MarkAsFailure
-    - stage:
-        name: build image
-        identifier: build_image
-        type: CI
-        spec:
-          cloneCodebase: true
-          platform:
-            os: Linux
-            arch: Amd64
-          runtime:
-            type: Cloud
-            spec: {}
-          execution:
-            steps:
               - step:
                   name: Build and Push Image
                   identifier: build_push
@@ -134,26 +94,6 @@ pipeline:
                       - <+pipeline.sequenceId>
                     dockerfile: Dockerfile
                     context: .
-        failureStrategies:
-          - onFailure:
-              errors:
-                - AllErrors
-              action:
-                type: MarkAsFailure
-    - stage:
-        name: publish harness ar
-        identifier: publish_harness_ar
-        type: CI
-        spec:
-          cloneCodebase: true
-          platform:
-            os: Linux
-            arch: Amd64
-          runtime:
-            type: Cloud
-            spec: {}
-          execution:
-            steps:
               - step:
                   name: Push to Harness Artifact Registry
                   identifier: push_harness_ar
