@@ -105,7 +105,7 @@ pipeline:
                       type: docker
                       spec:
                         connector: DockerHub
-                        repo: jedicraft/nmccarthy-project-jul-26:<+pipeline.sequenceId>
+                        image: jedicraft/nmccarthy-project-jul-26:<+pipeline.sequenceId>
                     tool:
                       type: Syft
                       spec:
