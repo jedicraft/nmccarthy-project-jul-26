@@ -1,6 +1,10 @@
 /**
  * Intentional demo-only weaknesses for Harness security scans (Snyk, SonarQube).
  * Do not copy these patterns into production code.
+ *
+ * Do not import this module from App or other browser entry points — it pulls in
+ * Node-only packages (jsonwebtoken, etc.) that crash the client bundle at runtime.
+ * Scanners still pick up this file via sonar.sources=src and SCA via package.json.
  */
 
 import axios from 'axios'
