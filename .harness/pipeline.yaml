@@ -94,33 +94,6 @@ pipeline:
                       - <+pipeline.sequenceId>
                     dockerfile: Dockerfile
                     context: .
-              - step:
-                  name: Push to Harness Artifact Registry
-                  identifier: push_harness_ar
-                  type: BuildAndPushDockerRegistry
-                  timeout: 30m
-                  spec:
-                    registryRef: test_ar_HAR
-                    repo: nmccarthy-project-jul-26
-                    tags:
-                      - latest
-                      - <+pipeline.sequenceId>
-                    dockerfile: Dockerfile
-                    context: .
-              - step:
-                  name: SBOM Generation
-                  identifier: sbom_generation
-                  template:
-                    templateRef: NJMSBOMGeneration
-                    versionLabel: v1
-                    templateInputs:
-                      type: SscaOrchestration
-                      spec:
-                        source:
-                          type: har
-                          spec:
-                            registry: test_ar_HAR
-                            image: nmccarthy-project-jul-26:<+pipeline.sequenceId>
         failureStrategies:
           - onFailure:
               errors:
