@@ -108,6 +108,36 @@ pipeline:
           deploymentType: Kubernetes
           service:
             serviceRef: nmccarthy_project_jul_26
+            serviceInputs:
+              serviceDefinition:
+                type: Kubernetes
+                spec:
+                  artifacts:
+                    primary:
+                      primaryArtifactRef: docker_image
+                      sources:
+                        - identifier: docker_image
+                          type: DockerRegistry
+                          spec:
+                            connectorRef: DockerHub
+                            imagePath: jedicraft/nmccarthy-project-jul-26
+                            tag: latest
+                  manifests:
+                    - manifest:
+                        identifier: k8s_manifests
+                        type: K8sManifest
+                        spec:
+                          store:
+                            type: Github
+                            spec:
+                              connectorRef: jedicraftGitHub
+                              gitFetchType: Branch
+                              paths:
+                                - k8s/
+                              repoName: nmccarthy-project-jul-26
+                              branch: main
+                          skipResourceVersioning: false
+                          enableDeclarativeRollback: false
           environment:
             environmentRef: nmccarthylocal
             deployToAll: false
